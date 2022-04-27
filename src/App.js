@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useEffect} from 'react'
+import Slider from './components/Slider'
+import data from './data/data'
 
-function App() {
+const App = () => {
+  
+  const [slider, setSlider] = useState(data);
+  const [index, setIndex] = useState(0);
+  const lastIndex = slider.length - 1;
+
+  useEffect(()=>{
+     if(index < 0) {
+        setIndex(lastIndex);
+     }
+     if(index > lastIndex) {
+        setIndex(0)
+     }
+  },[index, slider])
+
+  useEffect(()=>{
+     let imgSlider = setInterval(()=>{
+         setIndex(index + 1);
+     }, 3000);
+     return ()=>clearInterval(imgSlider);
+  },[index])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="slide-container">
+      {
+        slider.map((slider, sliderIndex)=>(
+           <Slider key={slider.id} lastIndex = {lastIndex} slideIndex={sliderIndex} index={index} {...slider} /> 
+        ))
+      }
+      <button className="prev" onClick={()=>setIndex(index-1)}>이전</button>
+      <button className="next" onClick={()=>setIndex(index+1)}>다음</button>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
